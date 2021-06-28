@@ -8,9 +8,8 @@ function handleSignallingData(data) {
             peerConn.setRemoteDescription(data.offer)
             createAndSendAnswer()
             break;
-        case "candicate":
-            peerConn.addIceCandicate(data.candicate)
-            break;
+        case "candidate":
+            peerConn.addIceCandidate(data.candidate)
     }
 }
 
@@ -41,7 +40,7 @@ function joinCall() {
             width: {
                 min: 480, ideal: 720, max: 1280
             },
-            aspectRatio: 1.3333
+            aspectRatio: 1.33333
         },
         audio: true
     }, (stream) => {
@@ -50,11 +49,10 @@ function joinCall() {
         let configuration = {
             iceServers: [
                 {
-                    "urls": ["stun.l.google.com:19302",
-                        "stun1.l.google.com:19302",
-                        "stun2.l.google.com:19302",]
-                }
-            ]
+                    "urls": ["stun:stun.l.google.com:19302",
+                        "stun:stun1.l.google.com:19302",
+                        "stun:stun2.l.google.com:19302"]
+                }]
         }
         peerConn = new RTCPeerConnection(configuration)
         peerConn.addStream(localStream);
@@ -67,8 +65,8 @@ function joinCall() {
 
             }
             sendData({
-                type: "send_candicate",
-                candicate: e.candidate
+                type: "send_candidate",
+                candidate: e.candidate
             })
         })
 
@@ -86,7 +84,7 @@ let isAudio = true
 function muteAudio() {
     isAudio = !isAudio
 
-    localStreamg.getAudioTracks()[0].enabled = isAudio
+    localStream.getAudioTracks()[0].enabled = isAudio
 }
 
 let isVideo = true

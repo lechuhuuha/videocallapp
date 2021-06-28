@@ -7,17 +7,15 @@ function handleSignallingData(data) {
         case "answer":
             peerConn.setRemoteDescription(data.answer)
             break;
-        case "candicate":
-            peerConn.addIceCandicate(data.candicate)
-            break;
+        case "candidate":
+            peerConn.addIceCandidate(data.candidate)
     }
 }
 let username
 function sendUsername() {
-    username = document.getElementById('username-input');
+    username = document.getElementById('username-input').value;
     sendData({
-        type: "store_user",
-
+        type: "store_user"
     })
 }
 function sendData(data) {
@@ -35,7 +33,7 @@ function startCall() {
             width: {
                 min: 480, ideal: 720, max: 1280
             },
-            aspectRatio: 1.3333
+            aspectRatio: 1.33333
         },
         audio: true
     }, (stream) => {
@@ -44,9 +42,10 @@ function startCall() {
         let configuration = {
             iceServers: [
                 {
-                    "url": ['stun:stun.l.google.com:19302']
-                }
-            ]
+                    "urls": ["stun:stun.l.google.com:19302",
+                        "stun:stun1.l.google.com:19302",
+                        "stun:stun2.l.google.com:19302"]
+                }]
         }
         peerConn = new RTCPeerConnection(configuration)
         peerConn.addStream(localStream);
@@ -59,8 +58,8 @@ function startCall() {
 
             }
             sendData({
-                type: "store_candicate",
-                candicate: e.candidate
+                type: "store_candidate",
+                candidate: e.candidate
             })
         })
         createAndSendOffer()
@@ -87,7 +86,7 @@ let isAudio = true
 function muteAudio() {
     isAudio = !isAudio
 
-    localStreamg.getAudioTracks()[0].enabled = isAudio
+    localStream.getAudioTracks()[0].enabled = isAudio
 }
 
 let isVideo = true
